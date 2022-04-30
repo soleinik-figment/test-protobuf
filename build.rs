@@ -6,7 +6,7 @@ fn main(){
     
     tonic_build::configure()
         //.type_attribute("helloworld.TestMessage", "#[derive(test_protobuf_derive::ToAscObjMacro,test_protobuf_derive::FromAscObjMacro)]")
-        .type_attribute("helloworld.TestMessage", "#[derive(test_protobuf_derive::TestMacro)]")
+        .type_attribute("helloworld.TestMessage", "#[derive(test_protobuf_derive::ToAscObjMacro)]")
         .type_attribute("helloworld.TestMessage", "#[ToAscObj(String)]")
         //.file_descriptor_set_path(out_dir.join("helloworld_descriptor.bin"))
         .out_dir("proto-bin") 

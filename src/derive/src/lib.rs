@@ -25,15 +25,7 @@ impl syn::parse::Parse for MyParams {
 
 #[proc_macro_derive(TestMacro, attributes(ToAscObj))] //pub trait ToAscObj<T: ?Sized>{
 pub fn test_macro_derive(tokens: TokenStream) -> TokenStream {
-    //impl ToAscObj<T> for MyType
-
-    //println!("\n\n\n\nthis is from macro:{}\n\n\n\n", tokens);
-
-
     let ast:DeriveInput = syn::parse(tokens).unwrap();
-    //println!("\n\n\n\nthis is from macro:{:#?}\n\n\n\n", ast);
-
-
     let name = &ast.ident;
 
     let attribute = ast.attrs.iter().filter(
@@ -43,10 +35,6 @@ pub fn test_macro_derive(tokens: TokenStream) -> TokenStream {
     let parameters: MyParams = syn::parse2(attribute.tokens.clone()).expect("Invalid my_trait attribute!");
     let typ = parameters.0;
 
-
-    println!("\n\n\n\nthis is from macro:{:#?}\n\n\n\n", typ);
-
-    //impl ToAscObj<T> for MyType
     let gen = quote! {
         impl runtime::ToAscObj<#typ> for #name {
             fn to(&self) {
@@ -55,13 +43,6 @@ pub fn test_macro_derive(tokens: TokenStream) -> TokenStream {
             }
         }
     };
-    println!("\n\n\n\nthis is from macro:{:#?}\n\n\n\n", gen);
-  
-
-
-
-    //impl_to_macro(&ast)    
-    //TokenStream::new()
     gen.into()
 }
 
@@ -70,17 +51,25 @@ pub fn test_macro_derive(tokens: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(ToAscObjMacro, attributes(ToAscObj))]
 pub fn to_asc_obj(tokens: TokenStream) -> TokenStream {
+    let ast:DeriveInput = syn::parse(tokens).unwrap();
+    let name = &ast.ident;
 
+    let attribute = ast.attrs.iter().filter(
+        |a| a.path.segments.len() == 1 && a.path.segments[0].ident == "ToAscObj"
+    ).nth(0).expect("my_trait attribute required for deriving MyTrait!");
 
+    let parameters: MyParams = syn::parse2(attribute.tokens.clone()).expect("Invalid my_trait attribute!");
+    let typ = parameters.0;
 
-    // let DeriveInput { ident, .. } = parse_macro_input!(tokens);
-    // let output = quote! {
-    //     impl crate::ToAscObj for #ident {}
-    // };
-    // output.into()
-
-    let ast = syn::parse(tokens).unwrap();
-    impl_to_macro(&ast)    
+    let gen = quote! {
+        impl runtime::ToAscObj<#typ> for #name {
+            fn to(&self) {
+                let nm = std::any::type_name::<#typ>();
+                println!("Hello, Macro! My name is {}! Type:{}", stringify!(#name), nm);
+            }
+        }
+    };
+    gen.into()
 }
 
 #[proc_macro_derive(FromAscObjMacro)]

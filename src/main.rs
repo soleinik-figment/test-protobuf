@@ -34,5 +34,6 @@ fn main(){
     let t = MyTestMessageAnother;
     t.to();
 
-
+    let t = TestMessage{name:"aaaa".to_string()};
+    t.to();
 }
