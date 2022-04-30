@@ -1,4 +1,5 @@
-#[derive(test_protobuf_derive::ToAscObjMacro,test_protobuf_derive::FromAscObjMacro)]
+#[derive(test_protobuf_derive::TestMacro)]
+#[ToAscObj(String)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TestMessage {
     #[prost(string, tag="1")]
